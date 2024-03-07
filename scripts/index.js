@@ -8,22 +8,29 @@
 
 // @todo: Вывести карточки на страницу
 
-const cardsList = document.querySelector('.places__list');
+const cardsContainer = document.querySelector('.places__list');
 const cardsTemplate = document.querySelector('#card-template').content;
 
-function foramateCard(item, deleteCard) {
-    let card = cardsTemplate.cloneNode(true);
+function createCard(item, deleteCard) {
+    const card = cardsTemplate.cloneNode(true);
     card.querySelector('.card__image').src = item.link;
+    card.querySelector('.card__image').alt = item.name;
     card.querySelector('.card__title').textContent = item.name;
-    card.querySelector('.card__delete-button').addEventListener('click', deleteCard);
+    // Так не работает, пишет что card.remove is not a function, подскажите почему так?
+    // card.querySelector('.card__delete-button').addEventListener('click', () => ErrorDeleteCard(card));
+    card.querySelector('.card__delete-button').addEventListener('click', deleteCard); 
     return card;
 }
 
+function ErrorDeleteCard(card) {
+    card.remove();
+}
+
 function deleteCard(e) {
-    const removeCard = e.target.closest('.card');
-    removeCard.remove(); 
+    const card = e.target.closest('.card'); 
+    card.remove();  
 }
 
 initialCards.forEach(element => {
-    cardsList.append(foramateCard(element, deleteCard));
+    cardsContainer.append(createCard(element, deleteCard));
 });
