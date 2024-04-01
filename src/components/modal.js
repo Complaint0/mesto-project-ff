@@ -4,6 +4,4 @@ export function openModal(element) {
 
 export function closeModal(element) {
     element.classList.remove('popup_is-opened');
-    if (element.querySelector('.popup__form') !== null)
-        element.querySelector('.popup__form').reset();
 }
