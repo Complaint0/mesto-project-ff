@@ -12,3 +12,11 @@
   border-radius: 0;
   padding: 0;
 }
+
+.popup__content_content_confirm {
+  min-height: 181px;
+}
+
+.popup__content_content_change-profile-image {
+  min-height: 272px;
+}

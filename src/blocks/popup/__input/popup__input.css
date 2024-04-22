@@ -10,6 +10,29 @@
   margin-bottom: 10px;
 }
 
+.popup__form_field {
+  position: relative;
+}
+
+.popup__input_type_error {
+  border-color: #FF0000;
+}
+
+.popup__input-error {
+ color: #FF0000;
+ font-size: 12px;
+ line-height: 14.52px;
+ opacity: 0;
+ transition: 0.3s;
+ display: block;
+ min-height: 30px;
+ margin-top: 2px;
+}
+
+.popup__input-error-active {
+  opacity: 1;
+}
+
 .popup__input:last-of-type {
   margin-bottom: 0;
 }
