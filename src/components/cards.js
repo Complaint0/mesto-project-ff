@@ -1,9 +1,8 @@
-import { closeModal, openModal } from "./modal";
-import { sendDeletedCard } from "./api";
+import { sendDeletedCard, sendLike } from "./api";
 
 const cardsTemplate = document.querySelector('#card-template').content.querySelector('.card');
 
-export function createCard(item, userId, { deleteCard, popUpDelete, likeCard, openCard } ) {
+export function createCard(item, userId, { confirmDeleteCard, likeCard, openCard } ) {
   const card = cardsTemplate.cloneNode(true);
   const cardImg = card.querySelector('.card__image'); 
   const cardLikes = card.querySelector('.card__like_count'); 
@@ -24,7 +23,7 @@ export function createCard(item, userId, { deleteCard, popUpDelete, likeCard, op
     card.removeChild(deleteButton);
   }
   else {
-    deleteButton.addEventListener('click', () => deleteCard(card, popUpDelete, cardId));
+    deleteButton.addEventListener('click', () => confirmDeleteCard( {card, cardId} ));
   }
 
   likeBtn.addEventListener('click', (evt) => likeCard(evt, {cardLikes, cardId}));
@@ -36,47 +35,32 @@ function setLikesCount(cardLikes, likesCount) {
   cardLikes.textContent = likesCount;
 }
 
-function isLiked(likesObj) {
-  likesObj.arrayLikes.forEach(element => {
-    if (element['_id'] == likesObj.userId)
-    likesObj.likeBtn.classList.add('card__like-button_is-active');
+function isLiked(likeObj) {
+  likeObj.arrayLikes.forEach(element => {
+    if (element['_id'] == likeObj.userId)
+      likeObj.likeBtn.classList.add('card__like-button_is-active');
   });
 }
 
-export function deleteCard(card, popUpDelete, cardId) {
-  openModal(popUpDelete);
-  popUpDelete.addEventListener('click', (evt) => {
-    if (evt.target.classList.contains('popup__button'))
-    {
-      closeModal(popUpDelete);
-      sendDeletedCard(cardId);
-      card.remove();
-    }
-  });
+export function deleteCard(card) {
+  card.remove();
 }
-
-
-
 
 export function likeCard(evt, card) {
   if (evt.target.classList.contains('card__like-button_is-active')) {
-    evt.target.classList.remove('card__like-button_is-active');
     sendLike(card, 'DELETE')
+      .then(data => {
+          evt.target.classList.remove('card__like-button_is-active');
+          setLikesCount(card.cardLikes, data.likes.length)
+      })
+      .catch((err) =>  console.log(err)); 
   }
   else {
-    evt.target.classList.add('card__like-button_is-active');
     sendLike(card, 'PUT')
+      .then(data => {
+        evt.target.classList.add('card__like-button_is-active');
+        setLikesCount(card.cardLikes, data.likes.length)
+      })
+      .catch((err) =>  console.log(err)); 
   }
-}
-
-function sendLike(card, method) {
-  fetch(`https://nomoreparties.co/v1/wff-cohort-12/cards/likes/${card.cardId}`, {
-      method: method,
-      headers: {
-          authorization: '15b9ade9-0fb6-48e4-9df8-c18fc5002836',
-          'Content-Type': 'application/json'
-      },
-    })
-    .then(data => data.json())
-    .then(data => setLikesCount(card.cardLikes, data.likes.length));
 }

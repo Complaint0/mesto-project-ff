@@ -4,11 +4,11 @@ export function clearValidation(formElement, validationConfig) {
     const inputErrorClass = validationConfig.inputErrorClass;
     const errorClass = validationConfig.errorClass;
 
-
     inputElements.forEach((inputElement) => {
-        checkInputValidity(formElement, inputElement, {inputErrorClass, errorClass});
-        toggleButtonState(inputElements, buttonElement, validationConfig.inactiveButtonClass);
+        inputElement.setCustomValidity("");
+        hideInputError(formElement, inputElement, {inputErrorClass, errorClass});
     });
+    toggleButtonState(inputElements, buttonElement, validationConfig.inactiveButtonClass);
 }
 
 
@@ -35,7 +35,10 @@ function setEventListeners(formElement, settings) {
 }
 
 function isValidInput(inputList) {
-    return inputList.some((inputElement) => !inputElement.validity.valid)
+    return inputList.some((inputElement) => 
+    {
+        return !inputElement.validity.valid
+    })
 }
 
 function toggleButtonState(inputList, buttonElement, disabledClass) {
@@ -53,7 +56,7 @@ function toggleButtonState(inputList, buttonElement, disabledClass) {
 function checkInputValidity(formElement, inputElement, errClasses) {
 
     if (inputElement.validity.patternMismatch) {
-        inputElement.setCustomValidity("Разрешены только латинские, кириллические буквы, знаки дефиса и пробелы");
+        inputElement.setCustomValidity(inputElement.dataset.errorMessage);
     } else {
         inputElement.setCustomValidity("");
     }
