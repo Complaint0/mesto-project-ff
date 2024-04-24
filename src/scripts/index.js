@@ -82,9 +82,9 @@ function handleFormProfileSubmit(evt) {
         .then(data =>  {
             setProfileData(data)
             closeModal(popUpEdit);
-            buttonEditProfile.textContent = btnLoadedText;
         })
-        .catch((err) =>  console.log(err)); 
+        .catch((err) =>  console.log(err))
+        .finally(() => buttonEditProfile.textContent = btnLoadedText);
 }
 
 function setProfileData(data) {
@@ -98,31 +98,32 @@ function handleFormAddCardSubmit(evt) {
     evt.preventDefault();
     const name = nameCardInput.value;
     const link = linkCardInput.value;
-    buttonAddCard.textContent = btnOnLoadText;
+    setBtnText(buttonAddCard, btnOnLoadText);
     sendNewCard({name, link})
         .then(data =>  {
             cardsContainer.prepend(createCard(data, userId, {confirmDeleteCard, likeCard, openCard}))
             evt.target.reset();
             closeModal(popUpAdd);
-            buttonAddCard.textContent = btnLoadedText;
             clearValidation(formElementAddCard, validationObject);
         })
-        .catch((err) =>  console.log(err)); 
+        .catch((err) =>  console.log(err))
+        .finally(() => setBtnText(buttonAddCard, buttonAddCard));
 }
 
 
 function handleFormChangeProfileImage(evt) {
     evt.preventDefault();
-    buttonChangeProfileImage.textContent = btnOnLoadText;
+    setBtnText(buttonChangeProfileImage, btnOnLoadText);
     checkIsImage(imageInput.value)
         .then(data => {
             setProfileImage(data.avatar)
             evt.target.reset();
             closeModal(popUpChangeProfileImage);
-            buttonChangeProfileImage.textContent = btnLoadedText;
             clearValidation(formElementChangeProfileImage, validationObject);
         })
-        .catch((err) =>  console.log(err)); 
+        .catch((err) =>  console.log(err))
+        
+        .finally(() => buttonChangeProfileImage.textContent = btnLoadedText);
 }
 
 function setProfileImage(image) {
@@ -132,8 +133,10 @@ function setProfileImage(image) {
 function handleSubmitConfirmPopup(evt) {
     evt.preventDefault();
     sendDeletedCard(isCardDelete.cardId)
-        .then(deleteCard(isCardDelete.card))
-        .then(closeModal(popUpDelete))
+        .then(data => {
+            deleteCard(isCardDelete.card);
+            closeModal(popUpDelete)
+        })
         .catch((err) =>  console.log(err));
 }
 
@@ -210,4 +213,9 @@ function innerCards(data, userId){
     });
 }
 
+
+function setBtnText(btn, text)
+{
+    btn.textContent = text;
+}
 
